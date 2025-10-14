@@ -7,4 +7,4 @@ Detta projekt ska:
 3. Göra dessa sökbara via en vectordatabas (postgres plugin).
 4. Presentera ett enkelt gränssnitt för att fråga llm:en frågor som kan besvaras med hjälp av embeddings
 
-Det finns en model för att generera embeddings (Här)[https://huggingface.co/ibm-granite/granite-embedding-english-r2]
+Det finns en model för att generera embeddings [Här](https://huggingface.co/ibm-granite/granite-embedding-english-r2)
