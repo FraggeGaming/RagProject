@@ -37,8 +37,10 @@ conn = psycopg2.connect(
         """
         print(message)
 
+
+
         # Return JSON
-        return jsonify(message + ", This was ur message")
+        return jsonify("Guidad visning \n\nAtt följa med på en inspirerande visning är en bra ingång till konsten. Välkommen på egen hand eller stäm träff med en vän. Fri entré.")
 
     except Exception as e:
         print("Error:", e)
