@@ -1,0 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
+DROP TABLE IF EXISTS events;
+CREATE TABLE IF NOT EXISTS events(title TEXT NOT NULL, id bigserial PRIMARY KEY, embedding vector(768));
+
