@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import MessageBox from './components/RagComponent';
+import mainLogo from './assets/UMUAILogo.svg';
+
 function App() {
 
 
 
 
-  const [message, setMessage] = useState<string>("Loading...");
+  const [message, setMessage] = useState<string>("Event information..");
   const [lastQuery, setLastQuery] = useState<string>("");
 
   useEffect(() => {
@@ -15,8 +17,11 @@ function App() {
   const SendQuery = (msg: string) => {
 
     //So user wont try to spam the same query over and over
-    if (lastQuery !== "" && lastQuery === msg)
+    if (lastQuery !== "" && lastQuery === msg) {
+      console.log("nice try")
       return message;
+
+    }
 
     setLastQuery(msg)
 
@@ -43,7 +48,9 @@ function App() {
 
     <div className="flex flex-col gap-10 items-center min-h-screen bg-gray-600">
 
-      <h1 className="text-5xl font-serif text-zinc-200 mt-10">UMU AI</h1>
+      <div className='flex mt-10'>
+        <img src={mainLogo} alt="fireSpot" className="w-52 h-auto" />
+      </div>
       <MessageBox
         SendQuery={SendQuery}
         Message={message}

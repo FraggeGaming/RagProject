@@ -9,15 +9,14 @@ export default function MessageBox({ SendQuery, Message }: MessageBoxProps) {
 
     const handleSend = (msg: string) => {
         // Example logic — replace with your backend call if needed
-        //setOutput(`You sent: ${input}`);
         SendQuery(msg)
-        console.log("Sent to server")
+        //console.log("Sent to server")
 
     };
 
     return (
         <div className="flex gap-5 flex-col w-1/2 bg-gray-200 rounded-2xl shadow-md p-6 ">
-            <h1 className="text-xl font-semibold text-gray-800">Message Sender</h1>
+            <h1 className="text-xl font-semibold text-gray-800">What event are you looking for?</h1>
 
             <InputBox
                 handleSend={handleSend}
@@ -44,7 +43,7 @@ export function InputBox({ handleSend }: InputBoxProps) {
         <div className="flex gap-5">
             <input
                 type="text"
-                placeholder="Type your message..."
+                placeholder="Computer science talks.."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="flex-grow border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
