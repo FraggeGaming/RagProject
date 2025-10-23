@@ -144,7 +144,11 @@ class EventEntry:
         self.embedding = embedding
 
     def insert(self, cursor):
-        cursor.execute("INSERT INTO events(title, embedding) VALUES (%s, %s);", (self.title, self.embedding))
+        cursor.execute("""
+            INSERT INTO events (title, date_raw, full_desc, duration, place, embedding)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        """, (self.title, self.date_raw, self.full_desc, self.time_span_raw, self.place, self.embedding))
+
 
 
 def init_db(connection):
@@ -156,7 +160,7 @@ def init_db(connection):
 def load_scraped_events(model, max=0):
     """Loads events from json scrape and computes embeddings. Returns a list of EventEntry objects."""
     scrape = None
-    with open(input_path) as file:
+    with open(input_path,encoding="utf-8") as file:
         scrape = json.load(file)
 
     full_descriptions = []
@@ -187,7 +191,8 @@ def main():
     model = SentenceTransformer(model_path)
 
     print("Generated events")
-    with connect(dbname="rag", user="arthur") as connection:
+    with connect(dbname="rag", user="postgres", password="",    host="localhost",
+    port=5432) as connection:
         register_vector(connection)
         init_db(connection)
         events = load_scraped_events(model, max=10)
