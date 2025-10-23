@@ -24,7 +24,7 @@ export default function MessageBox() {
 
 
         // Prevent spam
-        if (lastDate === value && lastQuery === msg && msg !== "") {
+        if (value != null && lastDate === value && lastQuery === msg && msg !== "") {
             console.log("nice try");
             return message;
         }
