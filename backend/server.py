@@ -6,7 +6,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from sentence_transformers import SentenceTransformer, util
 
+from pgvector.psycopg2 import register_vector
 
 
 app = Flask(__name__)
@@ -20,6 +22,9 @@ llm = ChatOllama(
     model="hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M",
     temperature=0,
 )
+
+model_path = "ibm-granite/granite-embedding-english-r2"
+model = SentenceTransformer(model_path)
 
 def GenerateLlmResponse(llm, msg, docs):
     prompt = PromptTemplate(
@@ -43,39 +48,36 @@ def GenerateLlmResponse(llm, msg, docs):
     print(f"{response}")
     return response
 
+
+def fetchSimilarEvents(msg):
+    embedding = model.encode(msg)
+    with psycopg2.connect(
+        dbname="rag",
+        user="postgres",
+        password="",
+        host="localhost",
+        port=5432
+    ) as conn:
+        register_vector(conn)
+        with conn.cursor() as cur:
+            # 3. Query for 3 most similar embeddings
+            cur.execute("""
+            SELECT title, full_desc, place
+            FROM events
+            ORDER BY embedding <-> %s
+            LIMIT %s;
+        """, (embedding, 3))
+            results = cur.fetchall()
+    return results
+
 @app.route('/fetchAll', methods=['GET'])
 def fetch_all():
     try:
         message = request.headers.get('Message')
         
-        # Connect to PostgreSQL
-        """ 
-conn = psycopg2.connect(
-            database="rag",
-            user="postgres",
-            password="",
-        )
-        cur = conn.cursor()
-
-        # # Execute query
-        cur.execute('SELECT * FROM events')
-
-        # # Fetch all rows
-        rows = cur.fetchall()
-
-        # # Optional: get column names
-        colnames = [desc[0] for desc in cur.description]
-
-        # # Convert each row to a dict
-        results = [dict(zip(colnames, row)) for row in rows]
-
-        # # Cleanup
-        cur.close()
-        conn.close()
-        """
+        vectorStore = fetchSimilarEvents(message)
         print(message)
         
-        vectorStore = "Guidad visning \n\nAtt följa med på en inspirerande visning är en bra ingång till konsten. Välkommen på egen hand eller stäm träff med en vän. Fri entré."
         
         response = GenerateLlmResponse(llm, message, vectorStore)
 
