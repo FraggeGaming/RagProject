@@ -141,13 +141,27 @@ class EventEntry:
         self.full_desc = json_object["Full description"]
         self.time_span_raw = json_object["Duration"]
         self.place = json_object["Plats"]
+        self.link = json_object["Link"]
         self.embedding = embedding
+        
+        parsed_date = _parse_date(self.date_raw)
+        self.event_date = parsed_date if parsed_date else None
 
     def insert(self, cursor):
-        cursor.execute("""
-            INSERT INTO events (title, date_raw, full_desc, duration, place, embedding)
-            VALUES (%s, %s, %s, %s, %s, %s);
-        """, (self.title, self.date_raw, self.full_desc, self.time_span_raw, self.place, self.embedding))
+       cursor.execute("""
+            INSERT INTO events (title, date_raw, full_desc, duration, place, event_date, link, embedding)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        """, (
+            self.title,
+            self.date_raw,
+            self.full_desc,
+            self.time_span_raw,
+            self.place,
+            self.event_date,
+            self.link,
+            self.embedding
+        ))
+
 
 
 

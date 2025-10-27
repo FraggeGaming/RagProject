@@ -11,8 +11,10 @@ export default function MessageBox() {
     const [message, setMessage] = useState<string>("Event information..");
 
     const toSQLDate = (date: Date) => {
-        // SQL-compatible format: YYYY-MM-DD
-        return date.toISOString().split("T")[0];
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
     };
 
 
@@ -22,7 +24,7 @@ export default function MessageBox() {
         //If only one date is selected, then that date is in Date-Start
         //If range is selected, range is in Date-Start and Date-End
 
-
+        setMessage("Loading...")
         // Prevent spam
         if (value != null && lastDate === value && lastQuery === msg && msg !== "") {
             console.log("nice try");
@@ -52,7 +54,7 @@ export default function MessageBox() {
 
         fetch("http://localhost:5000/fetchAll", options)
             .then((res) => res.json())
-            .then((data) => setMessage(data))
+            .then((data) => setMessage(data.text))
             .catch(console.error);
     };
 
@@ -84,7 +86,7 @@ export default function MessageBox() {
 
             <InputBox handleSend={handleSend} />
 
-            <div className="flex border border-gray-300 rounded-xl p-3 min-h-[100px] text-gray-700 bg-gray-50">
+            <div className="flex border border-gray-300 rounded-xl p-3 min-h-[100px] text-gray-700 bg-gray-50 whitespace-pre-line">
                 {message || "Ask me something..."}
             </div>
         </div>
